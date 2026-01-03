@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="library_menu_root"
+              name="Library"
+              sequence="100"
+              groups="group_library_user"/>
+
+    <menuitem id="library_menu_catalog"
+              name="Catalog"
+              parent="library_menu_root"
+              sequence="10"/>
+
+
+    <menuitem id="library_menu_authors"
+              name="Authors"
+              parent="library_menu_catalog"
+              action="library_author_action"
+              sequence="20"/>
+</odoo>
