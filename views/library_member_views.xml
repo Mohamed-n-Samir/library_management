@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="library_member_view_list" model="ir.ui.view">
+        <field name="name">library.member.list</field>
+        <field name="model">library.member</field>
+        <field name="arch" type="xml">
+            <list string="Members">
+                <field name="name" />
+                <field name="email" />
+                <field name="active_rental_count" string="Active Rentals" />
+                <field name="overdue_rental_count" string="Overdue"
+                    decoration-danger="overdue_rental_count > 0" />
+                <field name="active" invisible="1" />
+            </list>
+        </field>
+    </record>
+
+    <record id="library_member_view_form" model="ir.ui.view">
+        <field name="name">library.member.form</field>
+        <field name="model">library.member</field>
+        <field name="arch" type="xml">
+            <form string="Member">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                        invisible="active" />
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Member Name" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="email" widget="email" />
+                            <field name="active" invisible="1" />
+                        </group>
+                        <group>
+                            <field name="active_rental_count" />
+                            <field name="overdue_rental_count"
+                                decoration-danger="overdue_rental_count > 0" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Current Rentals" name="current_rentals">
+                            <field name="rental_ids"
+                                domain="[('state', 'in', ['ongoing', 'overdue'])]"
+                                readonly="1">
+                                <list>
+                                    <field name="book_id" />
+                                    <field name="checkout_date" />
+                                    <field name="due_date" />
+                                    <field name="state" widget="badge"
+                                        decoration-warning="state == 'ongoing'"
+                                        decoration-danger="state == 'overdue'" />
+                                    <field name="days_overdue" />
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rental History" name="rental_history">
+                            <field name="rental_ids" readonly="1">
+                                <list>
+                                    <field name="book_id" />
+                                    <field name="checkout_date" />
+                                    <field name="due_date" />
+                                    <field name="return_date" />
+                                    <field name="state" widget="badge"
+                                        decoration-success="state == 'returned'"
+                                        decoration-warning="state == 'ongoing'"
+                                        decoration-danger="state == 'overdue'" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record id="library_member_view_search" model="ir.ui.view">
+        <field name="name">library.member.search</field>
+        <field name="model">library.member</field>
+        <field name="arch" type="xml">
+            <search string="Search Members">
+                <field name="name" />
+                <field name="email" />
+                <separator />
+                <filter string="Active" name="active" domain="[('active', '=', True)]" />
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]" />
+                <separator />
+                <filter string="Has Overdue" name="has_overdue"
+                    domain="[('overdue_rental_count', '>', 0)]" />
+                <filter string="Has Active Rentals" name="has_active"
+                    domain="[('active_rental_count', '>', 0)]" />
+            </search>
+        </field>
+    </record>
+
+    <record id="library_member_action" model="ir.actions.act_window">
+        <field name="name">Members</field>
+        <field name="res_model">library.member</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="library_member_view_search" />
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register a new library member!
+            </p>
+            <p>
+                Members can borrow books from the library.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="library_rental_view_list" model="ir.ui.view">
+        <field name="name">library.rental.list</field>
+        <field name="model">library.rental</field>
+        <field name="arch" type="xml">
+            <list string="Rentals"
+                decoration-danger="state == 'overdue'"
+                decoration-muted="state == 'returned'">
+                <field name="book_id" />
+                <field name="member_id" />
+                <field name="checkout_date" />
+                <field name="due_date" />
+                <field name="return_date" />
+                <field name="days_overdue" decoration-danger="days_overdue > 0" />
+                <field name="state" widget="badge"
+                    decoration-success="state == 'returned'"
+                    decoration-warning="state == 'ongoing'"
+                    decoration-danger="state == 'overdue'" />
+            </list>
+        </field>
+    </record>
+
+    <record id="library_rental_view_form" model="ir.ui.view">
+        <field name="name">library.rental.form</field>
+        <field name="model">library.rental</field>
+        <field name="arch" type="xml">
+            <form string="Rental">
+                <header>
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="ongoing,returned,overdue" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="book_title" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Rental Details">
+                            <field name="book_id"
+                                options="{'no_create': True}"
+                                domain="[('status', '=', 'available')]"
+                                readonly="state != 'ongoing' or id" />
+                            <field name="member_id"
+                                options="{'no_create': True}"
+                                readonly="state != 'ongoing' or id" />
+                        </group>
+                        <group string="Dates">
+                            <field name="checkout_date" readonly="id" />
+                            <field name="due_date" readonly="state == 'returned'" />
+                            <field name="return_date" readonly="1" />
+                        </group>
+                    </group>
+                    <group invisible="state != 'overdue'">
+                        <group>
+                            <field name="days_overdue" class="text-danger fw-bold" />
+                            <field name="member_email" />
+                        </group>
+                    </group>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record id="library_rental_view_search" model="ir.ui.view">
+        <field name="name">library.rental.search</field>
+        <field name="model">library.rental</field>
+        <field name="arch" type="xml">
+            <search string="Search Rentals">
+                <field name="book_id" />
+                <field name="member_id" />
+                <field name="book_title" />
+                <field name="member_name" />
+                <separator />
+                <filter string="Ongoing" name="ongoing" domain="[('state', '=', 'ongoing')]" />
+                <filter string="Overdue" name="overdue" domain="[('state', '=', 'overdue')]" />
+                <filter string="Returned" name="returned" domain="[('state', '=', 'returned')]" />
+                <separator />
+                <filter string="Due Today" name="due_today"
+                    domain="[('due_date', '=', context_today().strftime('%Y-%m-%d'))]" />
+                <filter string="Due This Week" name="due_this_week"
+                    domain="[('due_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                ('due_date', '&lt;=', (context_today() + datetime.timedelta(days=6-context_today().weekday())).strftime('%Y-%m-%d'))]" />
+                <separator />
+                <filter string="Active Rentals" name="active_rentals"
+                    domain="[('state', 'in', ['ongoing', 'overdue'])]" />
+                <separator />
+                <filter string="Book" name="groupby_book" context="{'group_by': 'book_id'}" />
+                <filter string="Member" name="groupby_member"
+                    context="{'group_by': 'member_id'}" />
+                <filter string="State" name="groupby_state" context="{'group_by': 'state'}" />
+                <filter string="Checkout Date" name="groupby_checkout"
+                    context="{'group_by': 'checkout_date:month'}" />
+            </search>
+        </field>
+    </record>
+
+    <record id="library_rental_view_calendar" model="ir.ui.view">
+        <field name="name">library.rental.calendar</field>
+        <field name="model">library.rental</field>
+        <field name="arch" type="xml">
+            <calendar string="Rentals" date_start="checkout_date" date_stop="due_date"
+                color="state" mode="month">
+                <field name="book_id" />
+                <field name="member_id" />
+                <field name="state" />
+            </calendar>
+        </field>
+    </record>
+
+    <record id="library_rental_action" model="ir.actions.act_window">
+        <field name="name">Rentals</field>
+        <field name="res_model">library.rental</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="search_view_id" ref="library_rental_view_search" />
+        <field name="context">{'search_default_active_rentals': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new book rental!
+            </p>
+            <p>
+                Track book checkouts and returns.
+            </p>
+        </field>
+    </record>
+
+    <record id="library_rental_overdue_action" model="ir.actions.act_window">
+        <field name="name">Overdue Rentals</field>
+        <field name="res_model">library.rental</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'overdue')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No overdue rentals!
+            </p>
+            <p>
+                All books have been returned on time.
+            </p>
+        </field>
+    </record>
+
+</odoo>

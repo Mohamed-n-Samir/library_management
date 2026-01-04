@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="library_menu_root"
-              name="Library"
-              sequence="100"
-              groups="group_library_user"/>
 
     <menuitem id="library_menu_catalog"
               name="Catalog"
@@ -16,4 +12,26 @@
               parent="library_menu_catalog"
               action="library_author_action"
               sequence="20"/>
+
+
+    <menuitem id="library_menu_books"
+              name="Books"
+              parent="library_menu_catalog"
+              action="library_book_action"
+              sequence="30"/>
+
+
+    <menuitem id="library_menu_members"
+              name="Members"
+              parent="library_menu_catalog"
+              action="library_member_action"
+              sequence="40"/>
+
+
+    <menuitem id="library_menu_rentals"
+              name="Rentals"
+              parent="library_menu_catalog"
+              action="library_rental_action"
+              sequence="50"/>
+
 </odoo>

@@ -56,7 +56,7 @@
         <field name="arch" type="xml">
             <search string="Search Authors">
                 <field name="name"/>
-                <separator/>
+                
                 <filter string="Has Books" name="has_books" domain="[('book_count', '>', 0)]"/>
             </search>
         </field>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="library_menu_root"
+        name="Library"
+        sequence="100"
+        groups="group_library_user" />
+
+</odoo>

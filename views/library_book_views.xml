@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="library_book_view_list" model="ir.ui.view">
+        <field name="name">library.book.list</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <list string="Books" decoration-muted="status == 'rented'">
+                <field name="name" />
+                <field name="isbn" />
+                <field name="author_id" />
+                <field name="publication_date" />
+                <field name="status" widget="badge"
+                    decoration-success="status == 'available'"
+                    decoration-warning="status == 'rented'" />
+                <field name="available" invisible="1" />
+            </list>
+        </field>
+    </record>
+
+    <record id="library_book_view_search" model="ir.ui.view">
+        <field name="name">library.book.search</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <search string="Search Books">
+                <field name="name" />
+                <field name="isbn" />
+                <field name="author_id" />
+                <separator />
+                <filter string="Available" name="available" domain="[('status', '=', 'available')]" />
+                <filter string="Rented" name="rented" domain="[('status', '=', 'rented')]" />
+                <separator />
+                <filter string="Author" name="groupby_author" context="{'group_by': 'author_id'}" />
+                <filter string="Status" name="groupby_status" context="{'group_by': 'status'}" />
+            </search>
+        </field>
+    </record>
+
+    <record id="library_book_view_form" model="ir.ui.view">
+        <field name="name">library.book.form</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <form string="Book">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Book Title" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="isbn" />
+                            <field name="author_id" />
+                        </group>
+                        <group>
+                            <field name="publication_date" />
+                            <field name="available" invisible="1" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Rental History" name="rentals">
+                            <field name="rental_ids" readonly="1">
+                                <list>
+                                    <field name="member_id" />
+                                    <field name="checkout_date" />
+                                    <field name="due_date" />
+                                    <field name="return_date" />
+                                    <field name="state" widget="badge"
+                                        decoration-success="state == 'returned'"
+                                        decoration-warning="state == 'ongoing'"
+                                        decoration-danger="state == 'overdue'" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record id="library_book_action" model="ir.actions.act_window">
+        <field name="name">Books</field>
+        <field name="res_model">library.book</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="library_book_view_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new book to the library!
+            </p>
+            <p>
+                Track your library's book collection and their availability.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -7,6 +7,7 @@ class LibraryBook(models.Model):
     _name = "library.book"
     _description = "Library Book"
 
+
     # Fields
     name = fields.Char(
         string="Title", required=True, index=True, help="Tile of the book"
@@ -42,6 +43,23 @@ class LibraryBook(models.Model):
         help='Computed field indicating if the book is available for rental'
     )
     
+    rental_ids = fields.One2many(
+        comodel_name='library.rental',
+        inverse_name='book_id',
+        string='Rental History',
+        help='History of all rentals for this book'
+    )
+    rental_count = fields.Integer(
+        string='Rental Count',
+        compute='_compute_rental_count',
+        help='Total number of times this book has been rented'
+    )
+    
+    # Constraints
+    _isbn_unique = models.Constraint(
+        "UNIQUE(isbn)", "The ISBN field must be unique! This ISBN already exists."
+    )
+
     
     # Methods
     @api.depends('status')
