@@ -67,3 +67,37 @@ class LibraryBook(models.Model):
         for book in self:
             book.available = book.status == 'available'
     
+    @api.depends('rental_ids')
+    def _compute_rental_count(self):
+        for book in self:
+            book.rental_count = len(book.rental_ids)
+            
+    
+    # Actions
+    def action_check_availability(self):
+        self.ensure_one()
+        if self.available:
+            message = f"'{self.name}' is available for rental."
+            notification_type = 'success'
+        else:
+            current_rental = self.env['library.rental'].search([
+                ('book_id', '=', self.id),
+                ('state', 'in', ['ongoing', 'overdue'])
+            ], limit=1)
+            
+            if current_rental:
+                message = f"'{self.name}' is currently rented by {current_rental.member_id.name}. Due date: {current_rental.due_date}"
+            else:
+                message = f"'{self.name}' is not available."
+            notification_type = 'warning'
+            
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Book Availability',
+                'message': message,
+                'type': notification_type,
+                'sticky': False,
+            }
+        }
