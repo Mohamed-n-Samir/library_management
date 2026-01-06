@@ -47,6 +47,12 @@
                         string="Check Availability"
                         class="btn-primary"
                         icon="fa-search" />
+                    <button
+                        name="action_open_rental_wizard"
+                        type="object"
+                        string="Rent Book"
+                        class="btn-primary"
+                        icon="fa-book" />
                 </header>
                 <sheet>
                     <div class="oe_title">

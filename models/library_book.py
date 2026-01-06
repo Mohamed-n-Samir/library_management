@@ -102,3 +102,21 @@ class LibraryBook(models.Model):
             }
         }
         
+    def action_open_rental_wizard(self):
+        self.ensure_one()
+        if not self.available:
+            raise UserError(
+                f"Can't check out '{self.name}'. The book is currently not available."
+            )
+            
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Rent: {self.name}', 
+            'res_model': 'library.rental', 
+            'view_mode': 'form', 
+            'target': 'new', 
+            'context':{
+                'default_book_id':self.id,
+            }
+        }
+        
