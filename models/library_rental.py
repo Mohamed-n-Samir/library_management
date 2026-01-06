@@ -167,8 +167,37 @@ class LibraryRental(models.Model):
     def _onchange_book_id(self):
         if self.book_id and not self.book_id.available:
             return {
-                'warning': {
-                    'title': 'Book Not Available',
-                    'message': f"'{self.book_id.name}' is currently not available for rental."
+                "warning": {
+                    "title": "Book Not Available",
+                    "message": f"'{self.book_id.name}' is currently not available for rental.",
                 }
             }
+
+    # Action Methods
+    def action_return_book(self):
+        for rental in self:
+            if rental.state == "returned":
+                raise UserError(
+                    f"this book has already been returned on {rental.return_date}"
+                )
+            today = fields.Date.context_today(self)
+            rental.write({
+                'return_date': today, 
+                'state': 'returned',
+            })
+            rental.book_id.write({
+                'status': 'available'
+            })
+            
+            return {
+                'type': 'ir.actions.client', 
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Book Returned', 
+                    'message': 'The book has been successfully returned.', 
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
+            
+    

@@ -28,6 +28,9 @@
         <field name="arch" type="xml">
             <form string="Rental">
                 <header>
+                    <button name="action_return_book" string="Return Book" type="object"
+                        class="oe_highlight"
+                        invisible="state == 'returned'" />
                     <field name="state" widget="statusbar"
                         statusbar_visible="ongoing,returned,overdue" />
                 </header>
