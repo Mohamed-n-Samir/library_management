@@ -191,13 +191,22 @@ class LibraryRental(models.Model):
             
             return {
                 'type': 'ir.actions.client', 
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Book Returned', 
-                    'message': 'The book has been successfully returned.', 
-                    'type': 'success',
-                    'sticky': False,
-                }
+                'tag': 'reload',
             }
+            
+    def action_mark_overdue(self):
+        for rental in self:
+            if rental.state != 'ongoing':
+                raise UserError( 
+                    f'Only ongoing rentals can be marked as overdue.'
+                    f'Current state: {rental.state}'
+                )
+                
+            rental.write({
+                'state': 'overdue'
+            })
+            return True
+        
+    
             
     

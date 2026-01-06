@@ -42,8 +42,7 @@
                     </group>
                     <notebook>
                         <page string="Current Rentals" name="current_rentals">
-                            <field name="rental_ids"
-                                domain="[('state', 'in', ['ongoing', 'overdue'])]"
+                            <field name="current_rental_ids"
                                 readonly="1">
                                 <list>
                                     <field name="book_id" />

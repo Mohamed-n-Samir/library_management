@@ -24,6 +24,13 @@ class LibraryMember(models.Model):
         string='Rentals',
         help='All rentals by this member'
     )
+    current_rental_ids = fields.One2many(
+        comodel_name='library.rental',
+        inverse_name='member_id',
+        string='Current Rentals',
+        help='Active rentals by this member',
+        compute='_compute_current_rentals'
+    )
     rental_count = fields.Integer(
         string="Total Rentals",
         compute="_compute_rental_count",
@@ -67,4 +74,8 @@ class LibraryMember(models.Model):
             member.overdue_rental_count = len(
                 member.rental_ids.filtered(lambda r: r.state == 'overdue')
             )
+            
+    def _compute_current_rentals(self):
+        for member in self:
+            member.current_rental_ids = member.rental_ids.filtered(lambda rental: rental.state in ['ongoing', 'overdue'])
 
