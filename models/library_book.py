@@ -114,9 +114,12 @@ class LibraryBook(models.Model):
             'name': f'Rent: {self.name}', 
             'res_model': 'library.rental', 
             'view_mode': 'form', 
-            'target': 'new', 
+            'target': 'new', # new: popup (wizard), current: change the page 
             'context':{
                 'default_book_id':self.id,
             }
         }
+        
+    def action_pass(self):
+        pass
         

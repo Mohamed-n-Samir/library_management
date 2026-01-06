@@ -1,3 +1,4 @@
+from datetime import timedelta
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 
@@ -155,3 +156,19 @@ class LibraryRental(models.Model):
                     f"'{rental.book_id.name}' first."
                 )
         return super().unlink()
+
+    # SET DEFAULT Methods
+    @api.onchange("checkout_date")
+    def _onchage_checkout_date(self):
+        if self.checkout_date and not self.due_date:
+            self.due_date = self.checkout_date + timedelta(days=14)
+
+    @api.onchange("book_id")
+    def _onchange_book_id(self):
+        if self.book_id and not self.book_id.available:
+            return {
+                'warning': {
+                    'title': 'Book Not Available',
+                    'message': f"'{self.book_id.name}' is currently not available for rental."
+                }
+            }

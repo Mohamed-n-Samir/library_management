@@ -67,3 +67,4 @@ class LibraryMember(models.Model):
             member.overdue_rental_count = len(
                 member.rental_ids.filtered(lambda r: r.state == 'overdue')
             )
+
