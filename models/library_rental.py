@@ -1,6 +1,6 @@
-from datetime import timedelta
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
+from datetime import timedelta
 
 
 class LibraryRental(models.Model):
