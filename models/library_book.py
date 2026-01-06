@@ -65,7 +65,7 @@ class LibraryBook(models.Model):
     @api.depends('status')
     def _compute_available(self):
         for book in self:
-            book.available = book.status == 'available'
+            book.available = bool(book.status == 'available')
     
     @api.depends('rental_ids')
     def _compute_rental_count(self):
@@ -101,3 +101,4 @@ class LibraryBook(models.Model):
                 'sticky': False,
             }
         }
+        
