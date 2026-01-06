@@ -9,6 +9,7 @@
         'security/base_menu_security.xml',
         'security/library_security.xml',
         'security/ir.model.access.csv',
+        'data/library_cron.xml',
         'views/library_author_views.xml',
         'views/library_book_views.xml',
         'views/library_member_views.xml',

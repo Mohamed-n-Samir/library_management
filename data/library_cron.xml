@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="library_rental_cron" model="ir.cron">
+        <field name="name">Library: Check Overdue Rentals</field>
+        <field name="model_id" ref="model_library_rental" />
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_overdue_rentals()</field>
+        <field name="active" eval="True" />
+        <field name="nextcall"
+            eval="(datetime.now() + timedelta(days=1)).replace(hour=20, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+
+    </record>
+
+</odoo>

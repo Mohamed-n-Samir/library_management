@@ -208,5 +208,23 @@ class LibraryRental(models.Model):
             return True
         
     
+    # CRON Methods
+    def _cron_check_overdue_rentals(self):
+        today = fields.Date.context_today(self)
+        
+        overdue_rentals = self.search([
+            ('due_date', '<', today),
+            ('return_date', '=', False), 
+            ('state', 'in', ['ongoing', 'overdue'])
+        ])
+        
+        for rental in overdue_rentals:
+            if rental.state != 'overdue':
+                rental.write({
+                    'state': 'overdue'
+                })
+        
+        return True
+    
             
     
