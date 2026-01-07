@@ -2,11 +2,16 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 from datetime import timedelta
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class LibraryRental(models.Model):
 
     _name = "library.rental"
     _description = "Library Rental"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields
     book_id = fields.Many2one(
@@ -16,6 +21,7 @@ class LibraryRental(models.Model):
         index=True,
         ondelete="restrict",
         help="The book being rented",
+        tracking=True,
     )
     member_id = fields.Many2one(
         comodel_name="library.member",
@@ -24,18 +30,20 @@ class LibraryRental(models.Model):
         index=True,
         ondelete="restrict",
         help="The member renting the book",
+        tracking=True,
     )
     checkout_date = fields.Date(
         string="Checkout Date",
         default=fields.Date.context_today,
         required=True,
         help="Date when the book was checked out",
+        tracking=True,
     )
     due_date = fields.Date(
-        string="Due Date", required=True, help="Date whan the book should be returned"
+        string="Due Date", required=True, help="Date whan the book should be returned",tracking=True,
     )
     return_date = fields.Date(
-        string="Return Date", help="Actual date when the book was returned"
+        string="Return Date", help="Actual date when the book was returned",tracking=True,
     )
     state = fields.Selection(
         selection=[
@@ -47,6 +55,7 @@ class LibraryRental(models.Model):
         default="ongoing",
         required=True,
         help="Current status of the rental",
+        tracking=True,
     )
     days_overdue = fields.Integer(
         string="Days Overdue",
@@ -218,11 +227,27 @@ class LibraryRental(models.Model):
             ('state', 'in', ['ongoing', 'overdue'])
         ])
         
+        template = self.env.ref(
+            'library_management.email_template_overdue_remainder',
+            raise_if_not_found=False
+        )
+        
         for rental in overdue_rentals:
             if rental.state != 'overdue':
                 rental.write({
                     'state': 'overdue'
                 })
+                
+        _logger.info(template)
+        _logger.info(rental.member_id.email)
+                
+        if template and rental.member_id.email:
+            try:
+                _logger.info("Trying to send mail")
+                template.send_mail(rental.id, force_send=True)
+            except Exception as e:
+                _logger.error(e)
+                
         
         return True
     

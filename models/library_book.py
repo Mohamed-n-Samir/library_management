@@ -6,11 +6,11 @@ class LibraryBook(models.Model):
 
     _name = "library.book"
     _description = "Library Book"
-
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields
     name = fields.Char(
-        string="Title", required=True, index=True, help="Tile of the book"
+        string="Title", required=True, index=True, help="Tile of the book",tracking=True,
     )
     isbn = fields.Char(
         string="ISBN",
@@ -24,6 +24,7 @@ class LibraryBook(models.Model):
         index=True,
         ondelete="set null",
         help="Author of the book",
+        tracking=True,
     )
     publication_date = fields.Date(
         string="Publication Date", help="Date when the book was published"
@@ -34,6 +35,7 @@ class LibraryBook(models.Model):
         default="available",
         required=True,
         help="Current availability status of the book",
+        tracking=True,
     )
     
     available = fields.Boolean(

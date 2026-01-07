@@ -7,17 +7,19 @@ class LibraryMember(models.Model):
 
     _name = "library.member"
     _description = "Library Member"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields
     name = fields.Char(
-        string="Name", required=True, index=True, help="Full name of the Member."
+        string="Name", required=True, index=True, help="Full name of the Member.",tracking=True,
     )
     email = fields.Char(
         string="Email",
         required=True,
         help="Email address for notifications and reminders",
+        tracking=True,
     )
-    active = fields.Boolean(string="Active", default=True)
+    active = fields.Boolean(string="Active", default=True,tracking=True,)
     rental_ids = fields.One2many(
         comodel_name='library.rental',
         inverse_name='member_id',
