@@ -103,3 +103,43 @@ class TestLibraryRental(TransactionCase):
                 'checkout_date': date.today(),
                 'due_date': date.today() + timedelta(days=14),
             })
+            
+            
+    def test_05_cron_marks_overdue_rentals(self):
+        
+        # Test that the cron job correctly marks overdue rentals.
+        
+        rental = self.env['library.rental'].create({
+            'book_id': self.book_2.id,
+            'member_id': self.member.id,
+            'checkout_date': date.today() - timedelta(days=21),
+            'due_date': date.today() - timedelta(days=7),
+        })
+
+        self.assertEqual(rental.state, 'ongoing')
+
+        self.env['library.rental']._cron_check_overdue_rentals()
+
+        rental.invalidate_recordset()
+
+        self.assertEqual(rental.state, 'overdue')
+        self.assertGreater(rental.days_overdue, 0)
+        
+        
+    def test_06_email_validation(self):
+
+        # Test that invalid email addresses are rejected.
+
+        invalid_emails = [
+            'not-a-valid-email',
+            'notavalidemail',
+            'notavalidemail@yourmail',
+            'notavalidemail.com'
+        ]
+
+        for email in invalid_emails:
+            with self.assertRaises(ValidationError):
+                self.env['library.member'].create({
+                    'name': 'Invalid Email Member',
+                    'email': email,
+                })
