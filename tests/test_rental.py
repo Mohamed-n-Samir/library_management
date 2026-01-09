@@ -58,3 +58,48 @@ class TestLibraryRental(TransactionCase):
         
         self.assertEqual(self.book_1.status, 'rented')
         self.assertFalse(self.book_1.available)
+        
+    def test_03_return_book_restores_availability(self):
+
+        # Test that returning a book restores its availability.
+
+        rental = self.env['library.rental'].create({
+            'book_id': self.book_2.id,
+            'member_id': self.member.id,
+            'checkout_date': date.today(),
+            'due_date': date.today() + timedelta(days=14),
+        })
+        
+        self.assertEqual(self.book_2.status, 'rented')
+        
+        rental.action_return_book()
+
+        self.assertEqual(rental.state, 'returned')
+        self.assertIsNotNone(rental.return_date)
+        
+        self.assertEqual(self.book_2.status, 'available')
+        self.assertTrue(self.book_2.available)
+        
+    def test_04_cannot_rent_already_rented_book(self):
+        
+        # Test that a rented book cannot be rented again.
+        
+        self.env['library.rental'].create({
+            'book_id': self.book_1.id,
+            'member_id': self.member.id,
+            'checkout_date': date.today(),
+            'due_date': date.today() + timedelta(days=14),
+        })
+        
+        member_2 = self.env['library.member'].create({
+            'name': 'Second Member',
+            'email': 'second.member@example.com',
+        })
+        
+        with self.assertRaises(UserError):
+            self.env['library.rental'].create({
+                'book_id': self.book_1.id,
+                'member_id': member_2.id,
+                'checkout_date': date.today(),
+                'due_date': date.today() + timedelta(days=14),
+            })
