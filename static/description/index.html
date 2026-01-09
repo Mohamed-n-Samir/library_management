@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Library Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #875A7B;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        .highlight {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Library Management System</h1>
+    
+    <div class="highlight">
+        <p>A complete library management solution for Odoo 19, designed to handle book catalogs, 
+        member management, and rental tracking with automatic overdue detection.</p>
+    </div>
+    
+    <h2>Key Features</h2>
+    <ul class="feature-list">
+        <li>Book catalog management with author relationships</li>
+        <li>Member registration and tracking</li>
+        <li>Rental management with checkout and return workflows</li>
+        <li>Automatic overdue detection via scheduled actions</li>
+        <li>Email reminders for overdue books</li>
+        <li>Comprehensive search and filtering options</li>
+        <li>Full audit trail with Odoo chatter integration</li>
+    </ul>
+    
+    <h2>Models</h2>
+    <ul>
+        <li><strong>Books:</strong> Track your library's book collection</li>
+        <li><strong>Authors:</strong> Manage author information and their works</li>
+        <li><strong>Members:</strong> Register and manage library members</li>
+        <li><strong>Rentals:</strong> Handle book checkouts and returns</li>
+    </ul>
+    
+    <h2>Technical Specifications</h2>
+    <ul>
+        <li>Target: Odoo 19</li>
+        <li>Dependencies: base, mail</li>
+        <li>License: LGPL-3</li>
+    </ul>
+</body>
+</html>
