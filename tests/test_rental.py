@@ -143,3 +143,45 @@ class TestLibraryRental(TransactionCase):
                     'name': 'Invalid Email Member',
                     'email': email,
                 })
+                
+    def test_07_due_date_must_be_after_checkout(self):
+        
+        # Test that due date cannot be before checkout date.
+        
+        with self.assertRaises(ValidationError):
+            self.env['library.rental'].create({
+                'book_id': self.book_2.id,
+                'member_id': self.member.id,
+                'checkout_date': date.today(),
+                'due_date': date.today() - timedelta(days=7),
+            })
+
+    def test_08_cannot_delete_active_rental(self):
+        
+        # Test that active rentals cannot be deleted.
+        
+        rental = self.env['library.rental'].create({
+            'book_id': self.book_2.id,
+            'member_id': self.member.id,
+            'checkout_date': date.today(),
+            'due_date': date.today() + timedelta(days=14),
+        })
+        
+        with self.assertRaises(UserError):
+            rental.unlink()
+
+    def test_09_can_delete_returned_rental(self):
+        
+        # Test that returned rentals can be deleted.
+        
+        rental = self.env['library.rental'].create({
+            'book_id': self.book_2.id,
+            'member_id': self.member.id,
+            'checkout_date': date.today(),
+            'due_date': date.today() + timedelta(days=14),
+        })
+        
+        rental.action_return_book()
+
+        rental.unlink()
+        self.assertFalse(rental.exists())
